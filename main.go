@@ -8,7 +8,7 @@ import (
 
 	dadojusbr "github.com/dadosjusbr/proto"
 	"github.com/dadosjusbr/proto/coleta"
-	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -68,7 +68,7 @@ func main() {
 		Folha:  folha,
 	}
 
-	b, err := proto.Marshal(&rc)
+	b, err := prototext.Marshal(&rc)
 	if err != nil {
 		log.Fatalf("JSON marshaling error: %q", err)
 		os.Exit(1)
