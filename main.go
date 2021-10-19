@@ -63,9 +63,12 @@ func main() {
 		Arquivos:           files,
 	}
 
+	metadados := Metadados()
+
 	rc := coleta.ResultadoColeta{
 		Coleta: &colRes,
 		Folha:  folha,
+		Metadados: &metadados,
 	}
 
 	b, err := prototext.Marshal(&rc)
