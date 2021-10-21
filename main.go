@@ -16,7 +16,7 @@ var gitCommit string
 
 const (
 	agenciaID  = "mppb"
-	repColetor = "https://github.com/dadosjusbr/coletores"
+	repColetor = "https://github.com/dadosjusbr/coletor-mppb"
 )
 
 func main() {
