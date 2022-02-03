@@ -1,3 +1,5 @@
+![Docker](https://github.com/dadosjusbr/coletor-mppb/actions/workflows/docker-publish.yml/badge.svg)    
+
 # Ministério Público da Paraíba - Crawler
 
 Este crawler tem como objetivo a recuperação de informações sobre folhas de pagamentos dos funcionários do Ministério Público da Paraíba. O site com as informações pode ser acessado [aqui](http://pitagoras.mppb.mp.br/PTMP/FolhaListar).
