@@ -66,8 +66,8 @@ func main() {
 	metadados := Metadados()
 
 	rc := coleta.ResultadoColeta{
-		Coleta: &colRes,
-		Folha:  folha,
+		Coleta:    &colRes,
+		Folha:     folha,
 		Metadados: &metadados,
 	}
 

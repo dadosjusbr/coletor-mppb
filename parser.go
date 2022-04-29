@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
@@ -18,6 +19,7 @@ const (
 	REMUNERACAO_BASICA                             = "REMUNERAÇÃO BÁSICA"
 	REMUNERACAO_EVENTUAL_TEMPORARIA                = "REMUNERAÇÃO EVENTUAL OU TEMPORÁRIA"
 	OBRIGATORIOS_LEGAIS                            = "OBRIGATÓRIOS/LEGAIS"
+	STATUS_DATA_UNAVAILABLE                        = 4
 )
 
 // Mapeia as categorias das planilhas.
@@ -84,7 +86,8 @@ func Parse(arquivos []string, chave_coleta string) (*coleta.FolhaDePagamento, er
 			return nil, fmt.Errorf("erro na tentativa de transformar os dados em matriz (%s): %q", f, err)
 		}
 		if len(dados) == 0 {
-			return nil, fmt.Errorf("Não há dados para serem parseados. (%s)", f)
+			os.Stderr.Write([]byte(fmt.Sprintf("Não há dados para serem parseados. (%s)", f)))
+			os.Exit(STATUS_DATA_UNAVAILABLE)
 		}
 		contra_cheque, ok := getMembros(dados, mapIndenizacoes, chave_coleta, f)
 		if !ok {
