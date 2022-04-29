@@ -86,7 +86,7 @@ func Parse(arquivos []string, chave_coleta string) (*coleta.FolhaDePagamento, er
 			return nil, fmt.Errorf("erro na tentativa de transformar os dados em matriz (%s): %q", f, err)
 		}
 		if len(dados) == 0 {
-			os.Stderr.Write([]byte(fmt.Sprintf("Não há dados para serem parseados. (%s)", f)))
+			fmt.Fprintf(os.Stderr, "o arquivo %s não contém dados\n", f)
 			os.Exit(STATUS_DATA_UNAVAILABLE)
 		}
 		contra_cheque, ok := getMembros(dados, mapIndenizacoes, chave_coleta, f)
