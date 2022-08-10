@@ -224,10 +224,10 @@ func dadosParaMatriz(file string) ([][]string, error) {
 	var result [][]string
 	var doc ods.Doc
 	f, err := ods.Open(file)
-	defer f.Close()
 	if err != nil {
 		return nil, fmt.Errorf("ods.Open error(%s): %q", file, err)
 	}
+	defer f.Close()
 	f.ParseContent(&doc)
 	fileType := tipoCSV(file)
 	if err := assertHeaders(doc, fileType); err != nil {
