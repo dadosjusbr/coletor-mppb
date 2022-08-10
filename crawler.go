@@ -16,8 +16,8 @@ var (
 	tipos = map[string]int{
 		"membrosAtivos": 1,
 	}
-)
-
+) //https://pitagoras.mppb.mp.br/PTMP/indenizacoesFolhaVerbaIndenizRemTemporariaOds?mes=6&exercicio=2022&tipo=
+//https://transparencia.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds2022?&exe=2022&mes=1&html=true
 // Crawl retrieves payment files from MPPB.
 func Crawl(outputPath string, month, year int) ([]string, error) {
 	var files []string
