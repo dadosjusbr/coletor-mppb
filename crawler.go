@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	baseURL          = "http://pitagoras.mppb.mp.br/PTMP/"
+	baseURL          = "https://transparencia.mppb.mp.br/PTMP/"
 	tipoIndenizacoes = "indenizacoes"
 )
 
@@ -16,12 +16,13 @@ var (
 	tipos = map[string]int{
 		"membrosAtivos": 1,
 	}
-) //https://pitagoras.mppb.mp.br/PTMP/indenizacoesFolhaVerbaIndenizRemTemporariaOds?mes=6&exercicio=2022&tipo=
-//https://transparencia.mppb.mp.br/PTMP/FolhaVerbaIndenizRemTemporariaOds2022?&exe=2022&mes=1&html=true
+)
+
 // Crawl retrieves payment files from MPPB.
 func Crawl(outputPath string, month, year int) ([]string, error) {
 	var files []string
 	for typ, url := range links(baseURL, month, year) {
+
 		filePath := fmt.Sprintf("%s/%s-%d-%d.ods", outputPath, typ, month, year)
 		f, err := os.Create(filePath)
 		if err != nil {
@@ -39,9 +40,9 @@ func Crawl(outputPath string, month, year int) ([]string, error) {
 // Generate endpoints able to download
 func links(baseURL string, month, year int) map[string]string {
 	links := make(map[string]string)
-	links[tipoIndenizacoes] = fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds?mes=%d&exercicio=%d&tipo=", baseURL, month, year)
+	links[tipoIndenizacoes] = fmt.Sprintf("%sFolhaVerbaIndenizRemTemporariaOds2022?&exe=%d&mes=%d&html=true/javascript:downloadArquivo();", baseURL, year, month)
 	for t, id := range tipos {
-		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds?mes=%d&exercicio=%d&tipo=%d", baseURL, month, year, id)
+		links[t] = fmt.Sprintf("%sFolhaPagamentoExercicioMesNewOds2022?&exe=%d&mes=%d&tipo=%d&html=true/javascript:downloadArquivo();", baseURL, year, month, id)
 	}
 	return links
 }
@@ -55,5 +56,6 @@ func download(url string, w io.Writer) error {
 	if _, err := io.Copy(w, resp.Body); err != nil {
 		return fmt.Errorf("error copying response content:%q", err)
 	}
+
 	return nil
 }
