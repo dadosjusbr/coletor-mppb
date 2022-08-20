@@ -63,7 +63,7 @@ func main() {
 		Arquivos:           files,
 	}
 
-	metadados := Metadados()
+	metadados := Metadados(int32(year), int32(month))
 
 	rc := coleta.ResultadoColeta{
 		Coleta:    &colRes,
