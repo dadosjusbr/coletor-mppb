@@ -10,9 +10,7 @@ import (
 // o órgão expõe seus dados, alterações devem ser feitas nestes metadados.
 func Metadados(year int32, month int32) coleta.Metadados {
 	var metadado coleta.Metadados
-	metadado.NaoRequerLogin = true
-	metadado.NaoRequerCaptcha = true
-	metadado.Acesso = coleta.Metadados_AMIGAVEL_PARA_RASPAGEM
+	metadado.Acesso = coleta.Metadados_ACESSO_DIRETO
 	metadado.Extensao = coleta.Metadados_ODS
 	metadado.EstritamenteTabular = false // Dados limpos, toda linha é uma variável e toda coluna é um valor.
 	if year == 2022 && month == 6 {
