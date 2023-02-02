@@ -52,6 +52,10 @@ func download(url string, w io.Writer) error {
 	if err != nil {
 		return fmt.Errorf("error downloading file:%q", err)
 	}
+	if resp.StatusCode != 200 {
+		fmt.Printf("Sem dados!")
+		os.Exit(4)
+	}
 	defer resp.Body.Close()
 	if _, err := io.Copy(w, resp.Body); err != nil {
 		return fmt.Errorf("error copying response content:%q", err)
