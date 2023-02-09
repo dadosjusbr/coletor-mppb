@@ -52,14 +52,14 @@ func links(baseURL string, month, year int) map[string]string {
 func download(url string, w io.Writer) error {
 	resp, err := http.Get(url)
 	if err != nil {
-		return status.NewError(status.ConnectionError, fmt.Errorf("error downloading file:%q", err))
+		return status.NewError(status.ConnectionError, fmt.Errorf("error downloading file:%w", err))
 	}
 	if resp.StatusCode != 200 {
 		return status.NewError(status.DataUnavailable, fmt.Errorf("Sem dados"))
 	}
 	defer resp.Body.Close()
 	if _, err := io.Copy(w, resp.Body); err != nil {
-		return status.NewError(status.SystemError, fmt.Errorf("error copying response content:%q", err))
+		return status.NewError(status.SystemError, fmt.Errorf("error copying response content:%w", err))
 	}
 
 	return nil

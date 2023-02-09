@@ -23,11 +23,11 @@ func main() {
 
 	month, err := strconv.Atoi(os.Getenv("MONTH"))
 	if err != nil {
-		status.ExitFromError(status.NewError(status.InvalidInput, fmt.Errorf("Invalid month (\"%s\"): %q", os.Getenv("MONTH"), err)))
+		status.ExitFromError(status.NewError(status.InvalidInput, fmt.Errorf("Invalid month (\"%s\"): %w", os.Getenv("MONTH"), err)))
 	}
 	year, err := strconv.Atoi(os.Getenv("YEAR"))
 	if err != nil {
-		status.ExitFromError(status.NewError(status.InvalidInput, fmt.Errorf("Invalid year (\"%s\"): %q", os.Getenv("YEAR"), err)))
+		status.ExitFromError(status.NewError(status.InvalidInput, fmt.Errorf("Invalid year (\"%s\"): %w", os.Getenv("YEAR"), err)))
 	}
 
 	outputFolder := os.Getenv("OUTPUT_FOLDER")
@@ -36,7 +36,7 @@ func main() {
 	}
 
 	if err := os.Mkdir(outputFolder, os.ModePerm); err != nil && !os.IsExist(err) {
-		status.ExitFromError(status.NewError(status.SystemError, fmt.Errorf("Error creating output folder(%s): %q", outputFolder, err)))
+		status.ExitFromError(status.NewError(status.SystemError, fmt.Errorf("Error creating output folder(%s): %w", outputFolder, err)))
 	}
 
 	files, err := Crawl(outputFolder, month, year)
@@ -73,7 +73,7 @@ func main() {
 
 	b, err := prototext.Marshal(&rc)
 	if err != nil {
-		status.ExitFromError(status.NewError(status.OutputError, fmt.Errorf("JSON marshaling error: %q", err)))
+		status.ExitFromError(status.NewError(status.OutputError, fmt.Errorf("JSON marshaling error: %w", err)))
 	}
 	fmt.Printf("%s", b)
 }
