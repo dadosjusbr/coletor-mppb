@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/dadosjusbr/status v0.0.0-20230206194416-0829c65102ab
 	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

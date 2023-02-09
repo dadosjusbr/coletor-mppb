@@ -14,11 +14,11 @@ import (
 func TestLinks(t *testing.T) {
 	baseURL := "http://teste/"
 	l := links(baseURL, 1, 12)
-	assert.Equal(t, 8, len(l), "")
+	assert.Equal(t, 2, len(l), "")
 	for typ, u := range l {
 		assert.Truef(t, strings.HasPrefix(u, baseURL), "URL base inválida para tipo:%s", typ)
 		assert.Truef(t, strings.Contains(u, fmt.Sprintf("mes=%d", 1)), "Mês inválido para tipo:%s url:%s", typ, u)
-		assert.Truef(t, strings.Contains(u, fmt.Sprintf("exercicio=%d", 12)), "Ano inválido para tipo:%s url:%s", typ, u)
+		assert.Truef(t, strings.Contains(u, fmt.Sprintf("exe=%d", 12)), "Ano inválido para tipo:%s url:%s", typ, u)
 	}
 	for typ, id := range tipos {
 		assert.Truef(t, strings.Contains(l[typ], fmt.Sprintf("tipo=%d", id)), "ID do tipo inválido para tipo:%s", typ)

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/dadosjusbr/proto/coleta"
+	"github.com/dadosjusbr/status"
 	"github.com/knieriem/odf/ods"
 )
 
@@ -70,7 +71,7 @@ func Parse(arquivos []string, chave_coleta string) (*coleta.FolhaDePagamento, er
 	var parseErr bool
 	indenizacoes, err := getDadosIndenizacoes(arquivos)
 	if err != nil {
-		return nil, fmt.Errorf("erro tentando recuperar os dados de indenizações: %q", err)
+		return nil, status.NewError(status.InvalidInput, fmt.Errorf("erro tentando recuperar os dados de indenizações: %w", err))
 	}
 	mapIndenizacoes := map[string][]string{}
 	const INDENIZACOES_MATRICULA = 0
@@ -83,7 +84,7 @@ func Parse(arquivos []string, chave_coleta string) (*coleta.FolhaDePagamento, er
 		}
 		dados, err := dadosParaMatriz(f)
 		if err != nil {
-			return nil, fmt.Errorf("erro na tentativa de transformar os dados em matriz (%s): %q", f, err)
+			return nil, status.NewError(status.InvalidInput, fmt.Errorf("erro na tentativa de transformar os dados em matriz (%s): %w", f, err))
 		}
 		if len(dados) == 0 {
 			fmt.Fprintf(os.Stderr, "o arquivo %s não contém dados\n", f)
@@ -96,7 +97,7 @@ func Parse(arquivos []string, chave_coleta string) (*coleta.FolhaDePagamento, er
 		folha = append(folha, contra_cheque...)
 	}
 	if parseErr {
-		return &coleta.FolhaDePagamento{ContraCheque: folha}, fmt.Errorf("parse error")
+		return &coleta.FolhaDePagamento{ContraCheque: folha}, status.NewError(status.Unknown, fmt.Errorf("parsing error: getMembros()"))
 	}
 	return &coleta.FolhaDePagamento{ContraCheque: folha}, nil
 }
@@ -156,7 +157,7 @@ func criaMembro(membro []string, indenizacoes []string, chaveColeta string, coun
 	novoMembro.Ativo = true
 	remuneracoes, err := processaRemuneracao(membro, indenizacoes)
 	if err != nil {
-		return nil, fmt.Errorf("error na transformação das remunerações: %q", err)
+		return nil, status.NewError(status.InvalidInput, fmt.Errorf("error na transformação das remunerações: %w", err))
 	}
 	novoMembro.Remuneracoes = &coleta.Remuneracoes{Remuneracao: remuneracoes}
 	return &novoMembro, nil
@@ -167,31 +168,31 @@ func processaRemuneracao(membro []string, indenizacoes []string) ([]*coleta.Remu
 	var remuneracoes []*coleta.Remuneracao
 	temp, err := criaRemuneracao(indenizacoes, coleta.Remuneracao_R, INDENIZACOES_VERBAS_INDENIZATORIAS_1, coleta.Remuneracao_O)
 	if err != nil {
-		return nil, fmt.Errorf("erro processando verbas indenizatorias 1: %q", err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("erro processando verbas indenizatorias 1: %w", err))
 	}
 	remuneracoes = append(remuneracoes, temp...)
 
 	temp, err = criaRemuneracao(indenizacoes, coleta.Remuneracao_R, INDENIZACOES_OUTRAS_REMUNERACOES_TEMPORARIAS_2, coleta.Remuneracao_O)
 	if err != nil {
-		return nil, fmt.Errorf("erro processando outras remuneracoes temporarias 2: %q", err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("erro processando outras remuneracoes temporarias 2: %w", err))
 	}
 	remuneracoes = append(remuneracoes, temp...)
 
 	temp, err = criaRemuneracao(membro, coleta.Remuneracao_R, REMUNERACAO_BASICA, coleta.Remuneracao_B)
 	if err != nil {
-		return nil, fmt.Errorf("erro processando remuneracao básica: %q", err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("erro processando remuneracao básica: %w", err))
 	}
 	remuneracoes = append(remuneracoes, temp...)
 
 	temp, err = criaRemuneracao(membro, coleta.Remuneracao_R, REMUNERACAO_EVENTUAL_TEMPORARIA, coleta.Remuneracao_O)
 	if err != nil {
-		return nil, fmt.Errorf("erro processando remuneracao eventual temporaria: %q", err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("erro processando remuneracao eventual temporaria: %w", err))
 	}
 	remuneracoes = append(remuneracoes, temp...)
 
 	temp, err = criaRemuneracao(membro, coleta.Remuneracao_D, OBRIGATORIOS_LEGAIS, coleta.Remuneracao_O)
 	if err != nil {
-		return nil, fmt.Errorf("erro processando erro processando obrigatório/legais: %q", err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("erro processando erro processando obrigatório/legais: %w", err))
 	}
 	remuneracoes = append(remuneracoes, temp...)
 	return remuneracoes, nil
@@ -209,7 +210,7 @@ func criaRemuneracao(planilha []string, natureza coleta.Remuneracao_Natureza, ca
 		remuneracao.Valor, err = parseFloat(planilha, key, categoria)
 		remuneracao.TipoReceita = tipoReceita
 		if err != nil {
-			return nil, fmt.Errorf("error buscando o valor na planilha: %q", err)
+			return nil, status.NewError(status.InvalidFile, fmt.Errorf("error buscando o valor na planilha: %w", err))
 		}
 		if natureza == coleta.Remuneracao_D {
 			remuneracao.Valor = remuneracao.Valor * (-1)
@@ -225,13 +226,13 @@ func dadosParaMatriz(file string) ([][]string, error) {
 	var doc ods.Doc
 	f, err := ods.Open(file)
 	if err != nil {
-		return nil, fmt.Errorf("ods.Open error(%s): %q", file, err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("ods.Open error(%s): %w", file, err))
 	}
 	defer f.Close()
 	f.ParseContent(&doc)
 	fileType := tipoCSV(file)
 	if err := assertHeaders(doc, fileType); err != nil {
-		return nil, fmt.Errorf("assertHeaders() for %s error: %q", file, err)
+		return nil, status.NewError(status.InvalidFile, fmt.Errorf("assertHeaders() for %s error: %w", file, err))
 	}
 	result = append(result, getEmployees(doc)...)
 	return result, nil
@@ -300,7 +301,7 @@ func containsHeader(headers []string, key string, value int) error {
 	if strings.Contains(headers[value], key) {
 		return nil
 	}
-	return fmt.Errorf("couldn't find %s at position %d", key, value)
+	return status.NewError(status.Unknown, fmt.Errorf("couldn't find %s at position %d", key, value))
 }
 
 // parseFloat makes the string with format "xx.xx,xx" able to be parsed by the strconv.ParseFloat and return it parsed.
