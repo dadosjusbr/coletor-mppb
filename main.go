@@ -12,8 +12,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var gitCommit string
-
 const (
 	agenciaID  = "mppb"
 	repColetor = "https://github.com/dadosjusbr/coletor-mppb"
@@ -39,6 +37,11 @@ func main() {
 		status.ExitFromError(status.NewError(status.SystemError, fmt.Errorf("Error creating output folder(%s): %w", outputFolder, err)))
 	}
 
+	crawlerVersion := os.Getenv("CRAWLER_VERSION")
+	if crawlerVersion == "" {
+		crawlerVersion = "unspecified"
+	}
+
 	files, err := Crawl(outputFolder, month, year)
 	if err != nil {
 		status.ExitFromError(err)
@@ -58,7 +61,7 @@ func main() {
 		Ano:                int32(year),
 		TimestampColeta:    timestamppb.Now(),
 		RepositorioColetor: repColetor,
-		VersaoColetor:      gitCommit,
+		VersaoColetor:      crawlerVersion,
 		DirColetor:         agenciaID,
 		Arquivos:           files,
 	}
